@@ -292,7 +292,7 @@ if __name__ == "__main__":
         # 7. Optional: Delete the feature branch after merging to keep the repo clean
         time.sleep(10) # Give GitHub a moment to register the merge before deleting
         # Uncomment the line below if you want to automatically delete branches:
-        delete_branch(branch_name)
+        # delete_branch(branch_name) # Removed comment for clarity in previous logs, but keeping it optional
 
         print("Automation run completed successfully.")
 
