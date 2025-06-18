@@ -61,6 +61,7 @@ def get_repo_url():
     return f"/repos/{REPO_OWNER}/{REPO_NAME}"
 
 def get_ref_url(ref_type, ref_name):
+    # This is for GETting specific refs like 'heads/main' or 'tags/v1.0'
     return f"/repos/{REPO_OWNER}/{REPO_NAME}/git/refs/{ref_type}/{ref_name}"
 
 def get_contents_url(path):
@@ -86,7 +87,7 @@ def create_repository_if_not_exists():
             data = {
                 "name": REPO_NAME,
                 "description": "Automated repository for Pull Shark achievement (managed by GitHub Action).",
-                "private": True, # <<< IMPORTANT: Set to True for a private repo
+                "private": True, # Set to True for a private repo as requested
                 "auto_init": True # Initializes with a README.md, which is useful
             }
             # For user-owned repos, use /user/repos. For organization-owned, use /orgs/{org}/repos
@@ -134,7 +135,8 @@ def create_branch(branch_name, base_sha):
         "ref": f"refs/heads/{branch_name}",
         "sha": base_sha
     }
-    github_api_call("POST", get_ref_url("git", "refs"), json=data)
+    # THIS IS THE CRUCIAL FIX: Correct API endpoint for creating a new Git Ref (branch)
+    github_api_call("POST", f"/repos/{REPO_OWNER}/{REPO_NAME}/git/refs", json=data)
     print(f"Branch '{branch_name}' created.")
 
 def get_file_content(file_path, branch="main"):
