@@ -4,7 +4,6 @@ on:
   schedule:
     # Schedule: Run 3 times a day (every 8 hours) to aim for ~1095 PRs/year (1024 needed)
     # This schedule runs at 00:00, 08:00, and 16:00 UTC.
-    # You can adjust this 'cron' expression. For example, '0 0 * * *' for once a day at midnight UTC.
     - cron: '0 */8 * * *'
   workflow_dispatch: # Allows manual triggering from the GitHub Actions UI for testing
 
@@ -17,10 +16,10 @@ jobs:
 
     env:
       # Define the target repository owner and name (YOUR private repo details)
-      TARGET_REPO_OWNER: kenil-gopani # <<< REPLACE with your actual GitHub username
-      TARGET_REPO_NAME: automated-pull-shark-private # <<< REPLACE with your actual private repo name
+      TARGET_REPO_OWNER: kenil-gopani             # Confirmed by you
+      TARGET_REPO_NAME: automated-pull-shark-repo # Confirmed by you
       # Define the path for the automation log file within the target repo
-      AUTOMATION_LOG_FILE: automation_log.md
+      AUTOMATION_LOG_FILE: automation_log.md # This is where your logs will appear
 
     steps:
       - name: Checkout target repository
@@ -36,16 +35,14 @@ jobs:
           python-version: '3.x' # Use the latest Python 3 version
 
       - name: Install Python dependencies
-        # 'requests' is needed for HTTP API calls.
-        # 'base64' is a built-in Python module; it does NOT need to be installed.
+        # --- CRITICAL FIX: Only install 'requests'. 'base64' is a built-in module. ---
         run: pip install requests
 
       - name: Run automated PR script
         run: python .github/scripts/automation_script.py
         env:
-          # Pass the PAT securely from GitHub Secrets to the script's environment
-          GH_TOKEN_SCRIPT: ${{ secrets.AUTOMATION_PAT }}
-          # Pass other necessary environment variables to the script
+          # These pass the environment variables defined above to the script
+          GH_TOKEN_SCRIPT: ${{ secrets.AUTOMATION_PAT }} # Pass the PAT secret
           REPO_OWNER: ${{ env.TARGET_REPO_OWNER }}
           REPO_NAME: ${{ env.TARGET_REPO_NAME }}
           LOG_FILE_PATH: ${{ env.AUTOMATION_LOG_FILE }}
