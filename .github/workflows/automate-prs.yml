@@ -1,1 +1,51 @@
+name: Automated Pull Request Generator and Merger
 
+on:
+  schedule:
+    # Schedule: Run 3 times a day (every 8 hours) to aim for ~1095 PRs/year (1024 needed)
+    # This schedule runs at 00:00, 08:00, and 16:00 UTC.
+    # You can adjust this 'cron' expression. For example, '0 0 * * *' for once a day at midnight UTC.
+    - cron: '0 */8 * * *'
+  workflow_dispatch: # Allows manual triggering from the GitHub Actions UI for testing
+
+jobs:
+  generate_and_merge_pr:
+    runs-on: ubuntu-latest # The type of runner machine to use
+    # The 'environment' key is optional but good practice for larger projects.
+    # environment:
+    #   name: production
+
+    env:
+      # Define the target repository owner and name (YOUR private repo details)
+      TARGET_REPO_OWNER: kenil-gopani # <<< REPLACE with your actual GitHub username
+      TARGET_REPO_NAME: automated-pull-shark-private # <<< REPLACE with your actual private repo name
+      # Define the path for the automation log file within the target repo
+      AUTOMATION_LOG_FILE: automation_log.md
+
+    steps:
+      - name: Checkout target repository
+        # This step checks out the repository where the workflow file resides.
+        # Since the repo is private, we *must* use the PAT for checkout.
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.AUTOMATION_PAT }} # Use the PAT from secrets
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x' # Use the latest Python 3 version
+
+      - name: Install Python dependencies
+        # 'requests' is needed for HTTP API calls.
+        # 'base64' is a built-in Python module; it does NOT need to be installed.
+        run: pip install requests
+
+      - name: Run automated PR script
+        run: python .github/scripts/automation_script.py
+        env:
+          # Pass the PAT securely from GitHub Secrets to the script's environment
+          GH_TOKEN_SCRIPT: ${{ secrets.AUTOMATION_PAT }}
+          # Pass other necessary environment variables to the script
+          REPO_OWNER: ${{ env.TARGET_REPO_OWNER }}
+          REPO_NAME: ${{ env.TARGET_REPO_NAME }}
+          LOG_FILE_PATH: ${{ env.AUTOMATION_LOG_FILE }}
