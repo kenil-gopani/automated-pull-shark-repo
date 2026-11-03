@@ -1500,3 +1500,4 @@
 - 2026-11-02 10:39:29 IST: Successfully merged PR #1499 ('Automated Pull Request: pr-1793596158-9454') from 'feature/pr-1793596158-9454'.
 - 2026-11-02 23:29:54 IST: Successfully merged PR #1500 ('Automated Pull Request: pr-1793642383-2164') from 'feature/pr-1793642383-2164'.
 - 2026-11-03 11:24:25 IST: Successfully merged PR #1501 ('Automated Pull Request: pr-1793685255-2507') from 'feature/pr-1793685255-2507'.
+- 2026-11-03 21:29:18 IST: Failed to complete automation: Fatal GitHub API Error: 405 - {"message":"Merge already in progress","documentation_url":"https://docs.github.com/rest/pulls/pulls#merge-a-pull-request","status":"405"}
